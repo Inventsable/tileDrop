@@ -13,8 +13,8 @@ Vue.component('sandbox', {
 Vue.component('griderator', {
     template: `
         <div class="board">
-            <div class="grid" :style="getGridStyle()">
-                <img v-for="cell in grids" style="width:20px; height:20px;" :key="cell.name" :src="'terrain/' + cell.name" />
+            <div v-for="(grid, key) in grids" :key="key" class="grid" :style="getGridStyle(grid)">
+                <img v-for="(cell,index) in grid" :key="index" style="width:20px; height:20px;" :key="cell.name" :src="'terrain/' + cell.name" />
             </div>
         </div>
     `,
@@ -33,7 +33,14 @@ Vue.component('griderator', {
     },
     methods: {
         getGridStyle(count) {
-            return `color: red;`
+            console.log(count);
+            let cols = Math.sqrt(count.length);
+            console.log(cols)
+            return `
+                display: grid;
+                grid-template-columns: repeat(${cols}, 1fr);
+                border: 2px solid red;
+            `
         },
         constructTileCounts(max) {
             let mirror = [];
@@ -58,17 +65,27 @@ Vue.component('griderator', {
                 for (let i = 0; i < count.total; i++) {
                     const x = i % tilerows;
                     const y = (i >= tilerows) ? Math.floor(i / tilerows) : 0;
-                    const name = `${count.z}-${x}-${y}.png`
+                    let name = null;
+                    if (count.z >= 5) {
+                        let direction = null;
+                        if (x >= 17)
+                            direction = true;
+                        else
+                            direction = false;
+                        name = `${count.z}/${(direction) ? 'B' : 'A'}/${count.z}-${x}-${y}.png`
+                    } else {
+                        name = `${count.z}/${count.z}-${x}-${y}.png`
+                    }
                     let child = {
                         name: name,
                         x: x,
                         y: y,
                         z: count.z,
                     }
-                    // mirror.push(child)
-                    console.log(child)
-                    this.grids.push(child);
+                    mirror.push(child)
+                    // console.log(child)
                 }
+                this.grids.push(mirror);
             })
             console.log(this.grids)
         },
