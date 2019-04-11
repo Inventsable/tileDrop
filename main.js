@@ -13,20 +13,23 @@ Vue.component('sandbox', {
 Vue.component('griderator', {
     template: `
         <div class="board">
-            <div v-for="(grid, key) in grids" :key="key" class="grid" :style="getGridStyle(grid)">
+            <div v-for="(grid, key) in grids" :key="key" class="boardContent">
+                <div class="boardAnno">{{findZoomLevel(grid.length)}}</div>
+                <div class="grid" :style="getGridStyle(grid)">
                 <img 
                     v-for="(cell,index) in grid" 
                     :key="index" 
                     style="width:20px; height:20px;" 
-                    :key="cell.name" 
                     :src="'default/' + cell.name" />
+                </div>
             </div>
         </div>
     `,
     data: () => ({
         grids: [],
         tileCounts: [],
-        max: 5,
+        max: 6,
+        exponents: [],
     }),
     computed: {
         allTiles() {
@@ -34,7 +37,8 @@ Vue.component('griderator', {
         }
     },
     created() {
-        this.constructTileCounts(this.max);
+        this.getPowers();
+        this.constructTileCounts(this.max);       
     },
     methods: {
         getGridStyle(count) {
@@ -119,6 +123,27 @@ Vue.component('griderator', {
                 this.grids.push(mirror);
             })
             console.log(this.grids)
+        },
+        getPowers() {
+            for (let i = 0; i < 10; i++)
+                this.exponents.push(Math.pow(4, i))
+        },
+        findZoomLevel(num) {
+            console.log(num)
+            console.log(this.exponents);
+            for (let i = 0; i < this.exponents.length; i++) {
+                const exp = this.exponents[i];
+                if (num == exp) {
+                    return 'zoom ' + i;
+                }
+                // if (i > 0) {
+                //     if (Math.sqrt(exp) == num)
+                //         return i;
+                // } else {
+                //     if (exp == num)
+                //         return 0;
+                // }
+            }
         },
     }
 })
