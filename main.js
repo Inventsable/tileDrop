@@ -14,14 +14,19 @@ Vue.component('griderator', {
     template: `
         <div class="board">
             <div v-for="(grid, key) in grids" :key="key" class="grid" :style="getGridStyle(grid)">
-                <img v-for="(cell,index) in grid" :key="index" style="width:20px; height:20px;" :key="cell.name" :src="'terrain/' + cell.name" />
+                <img 
+                    v-for="(cell,index) in grid" 
+                    :key="index" 
+                    style="width:20px; height:20px;" 
+                    :key="cell.name" 
+                    :src="'default/' + cell.name" />
             </div>
         </div>
     `,
     data: () => ({
         grids: [],
         tileCounts: [],
-        max: 7,
+        max: 5,
     }),
     computed: {
         allTiles() {
